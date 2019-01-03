@@ -173,12 +173,19 @@ static inline void *mempset(void *s, int c, size_t n) {
         return (uint8_t*)s + n;
 }
 
-static inline void _reset_errno_(int *saved_errno) {
-        errno = *saved_errno;
+struct _protect_errno {
+        int value;
+        int enabled;
+};
+
+static inline void _reset_errno_(struct _protect_errno *p) {
+        if (p->enabled) {
+                errno = p->value;
+        }
 }
 
 #define PROTECT_ERRNO                                                   \
-        _cleanup_(_reset_errno_) _unused_ int _saved_errno_ = errno
+        _cleanup_(_reset_errno_) _unused_ struct _protect_errno _protect_errno_ = { errno, 1 }
 
 static inline int negative_errno(void) {
         /* This helper should be used to shut up gcc if you know 'errno' is

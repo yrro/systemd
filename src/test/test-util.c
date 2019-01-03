@@ -202,7 +202,7 @@ static void test_u64log2(void) {
         assert_se(u64log2(1024*1024+5) == 20);
 }
 
-static void test_protect_errno(void) {
+static void test_protect_errno_enabled(void) {
         log_info("/* %s */", __func__);
 
         errno = 12;
@@ -211,6 +211,18 @@ static void test_protect_errno(void) {
                 errno = 11;
         }
         assert_se(errno == 12);
+}
+
+static void test_protect_errno_disabled(void) {
+        log_info("/* %s */", __func__);
+
+        errno = 12;
+        {
+                PROTECT_ERRNO;
+                _protect_errno_.enabled = false;
+                errno = 22;
+        }
+        assert_se(errno == 22);
 }
 
 static void test_in_set(void) {
@@ -382,7 +394,8 @@ int main(int argc, char *argv[]) {
         test_container_of();
         test_div_round_up();
         test_u64log2();
-        test_protect_errno();
+        test_protect_errno_enabled();
+        test_protect_errno_disabled();
         test_in_set();
         test_log2i();
         test_eqzero();
