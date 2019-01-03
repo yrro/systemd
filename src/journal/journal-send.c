@@ -337,7 +337,7 @@ static int fill_iovec_perror_and_send(const char *message, int skip, struct iove
                 char* j;
 
                 errno = 0;
-                j = strerror_r(_protect_errno_.value, buffer + 8 + k, n - 8 - k);
+                j = strerror_r(_saved_errno_, buffer + 8 + k, n - 8 - k);
                 if (errno == 0) {
                         char error[STRLEN("ERRNO=") + DECIMAL_STR_MAX(int) + 1];
 
@@ -351,7 +351,7 @@ static int fill_iovec_perror_and_send(const char *message, int skip, struct iove
                                 memcpy(buffer + 8 + k - 2, ": ", 2);
                         }
 
-                        xsprintf(error, "ERRNO=%i", _protect_errno_.value);
+                        xsprintf(error, "ERRNO=%i", _saved_errno_);
 
                         assert_cc(3 == LOG_ERR);
                         iov[skip+0] = IOVEC_MAKE_STRING("PRIORITY=3");
