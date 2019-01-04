@@ -213,19 +213,6 @@ static void test_protect_errno(void) {
         assert_se(errno == 12);
 }
 
-static void test_protect_errno_disarmed(void) {
-        log_info("/* %s */", __func__);
-
-        errno = 12;
-        {
-                PROTECT_ERRNO;
-
-                PROTECT_ERRNO_DISARM;
-                errno = 22;
-        }
-        assert_se(errno == 22);
-}
-
 static void test_in_set(void) {
         log_info("/* %s */", __func__);
 
@@ -396,7 +383,6 @@ int main(int argc, char *argv[]) {
         test_div_round_up();
         test_u64log2();
         test_protect_errno();
-        test_protect_errno_disarmed();
         test_in_set();
         test_log2i();
         test_eqzero();

@@ -704,6 +704,11 @@ tests += [
          [libdl],
          'ENABLE_NSS', 'manual'],
 
+        [['src/test/test-nss-util.c'],
+         [],
+         [libdl],
+         'ENABLE_NSS', 'manual'],
+
         [['src/test/test-umount.c',
           'src/core/mount-setup.c',
           'src/core/mount-setup.h',

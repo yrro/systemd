@@ -186,8 +186,7 @@ enum nss_status _nss_resolve_gethostbyname4_r(
         l = strlen(canonical);
         ms = ALIGN(l+1) + ALIGN(sizeof(struct gaih_addrtuple)) * c;
         if (buflen < ms) {
-                PROTECT_ERRNO_DISARM;
-                *errnop = ERANGE;
+                *errnop = ASSIGN_ERRNOP(ERANGE);
                 *h_errnop = NETDB_INTERNAL;
                 return NSS_STATUS_TRYAGAIN;
         }
@@ -268,7 +267,7 @@ enum nss_status _nss_resolve_gethostbyname4_r(
         return NSS_STATUS_SUCCESS;
 
 fail:
-        PROTECT_ERRNO_DISARM;
+        //PROTECT_ERRNO_DISARM;
         *errnop = -r;
         *h_errnop = NO_RECOVERY;
         return ret;
@@ -366,8 +365,7 @@ enum nss_status _nss_resolve_gethostbyname3_r(
         ms = ALIGN(l+1) + c * ALIGN(alen) + (c+2) * sizeof(char*);
 
         if (buflen < ms) {
-                PROTECT_ERRNO_DISARM;
-                *errnop = ERANGE;
+                *errnop = ASSIGN_ERRNOP(ERANGE);
                 *h_errnop = NETDB_INTERNAL;
                 return NSS_STATUS_TRYAGAIN;
         }
@@ -458,7 +456,7 @@ enum nss_status _nss_resolve_gethostbyname3_r(
         return NSS_STATUS_SUCCESS;
 
 fail:
-        PROTECT_ERRNO_DISARM;
+        //PROTECT_ERRNO_DISARM;
         *errnop = -r;
         *h_errnop = NO_RECOVERY;
         return ret;
@@ -496,15 +494,13 @@ enum nss_status _nss_resolve_gethostbyaddr2_r(
         assert(h_errnop);
 
         if (!IN_SET(af, AF_INET, AF_INET6)) {
-                PROTECT_ERRNO_DISARM;
-                *errnop = EAFNOSUPPORT;
+                *errnop = ASSIGN_ERRNOP(EAFNOSUPPORT);
                 *h_errnop = NO_DATA;
                 return NSS_STATUS_UNAVAIL;
         }
 
         if (len != FAMILY_ADDRESS_SIZE(af)) {
-                PROTECT_ERRNO_DISARM;
-                *errnop = EINVAL;
+                *errnop = ASSIGN_ERRNOP(EINVAL);
                 *h_errnop = NO_RECOVERY;
                 return NSS_STATUS_UNAVAIL;
         }
@@ -582,8 +578,7 @@ enum nss_status _nss_resolve_gethostbyaddr2_r(
               c * sizeof(char*);        /* pointers to aliases, plus trailing NULL */
 
         if (buflen < ms) {
-                PROTECT_ERRNO_DISARM;
-                *errnop = ERANGE;
+                *errnop = ASSIGN_ERRNOP(ERANGE);
                 *h_errnop = NETDB_INTERNAL;
                 return NSS_STATUS_TRYAGAIN;
         }
@@ -643,7 +638,7 @@ enum nss_status _nss_resolve_gethostbyaddr2_r(
         return NSS_STATUS_SUCCESS;
 
 fail:
-        PROTECT_ERRNO_DISARM;
+        //PROTECT_ERRNO_DISARM;
         *errnop = -r;
         *h_errnop = NO_RECOVERY;
         return ret;

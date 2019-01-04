@@ -13,6 +13,17 @@
 #  define DEPRECATED_RES_USE_INET6 0x00002000
 #endif
 
+/*
+ * In dynamically-linked programs, errnop == &errno, so in order to assign to
+ * it we have to disable PROTECT_ERRNO at the same time.
+ */
+#define ASSIGN_ERRNOP(r) \
+        ({ \
+                errno = _saved_errno_; \
+                _saved_errno_ = -1; \
+                abs(r); \
+        })
+
 #define NSS_GETHOSTBYNAME_PROTOTYPES(module)            \
 enum nss_status _nss_##module##_gethostbyname4_r(       \
                 const char *name,                       \
