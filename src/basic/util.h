@@ -181,6 +181,19 @@ static inline void _reset_errno_(int *saved_errno) {
 #define PROTECT_ERRNO                                                   \
         _cleanup_(_reset_errno_) _unused_ int _saved_errno_ = errno
 
+/*
+ * NSS modules should indicate errors by assigning to the passed-in *errnop
+ * rather than errno directly; however in dynamically-linked programs, errnop
+ * == &errno, so PROTECT_ERRNO has to be disabled in order for assigning to
+ * *errnop to be effective.
+ */
+#define DISARM_PROTECT_ERRNO(r) \
+        ({ \
+                errno = _saved_errno_; \
+                _saved_errno_ = -1; \
+                abs(r); \
+        })
+
 static inline int negative_errno(void) {
         /* This helper should be used to shut up gcc if you know 'errno' is
          * negative. Instead of "return -errno;", use "return negative_errno();"
