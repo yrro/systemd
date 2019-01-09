@@ -171,7 +171,7 @@ static enum nss_status fill_in_hostent(
                 uint32_t local_address_ipv4,
                 struct hostent *result,
                 char *buffer, size_t buflen,
-                int *errnop, int *h_errnop,
+                int *errnop, int *h_errnop, int* _saved_errno_p,
                 int32_t *ttlp,
                 char **canonp) {
 
@@ -185,6 +185,7 @@ static enum nss_status fill_in_hostent(
         assert(buffer);
         assert(errnop);
         assert(h_errnop);
+        assert(_saved_errno_p);
 
         alen = FAMILY_ADDRESS_SIZE(af);
 
@@ -202,7 +203,7 @@ static enum nss_status fill_in_hostent(
                 (c > 0 ? c+1 : 2) * sizeof(char*);
 
         if (buflen < ms) {
-                *errnop = ERANGE; // can't use DISARM_PROTECT_ERRNO here
+                *errnop = DISARM_PROTECT_ERRNO_INNER(ERANGE);
                 *h_errnop = NETDB_INTERNAL;
                 return NSS_STATUS_TRYAGAIN;
         }
@@ -369,7 +370,7 @@ enum nss_status _nss_myhostname_gethostbyname3_r(
                         local_address_ipv4,
                         host,
                         buffer, buflen,
-                        errnop, h_errnop,
+                        errnop, h_errnop, &_saved_errno_,
                         ttlp,
                         canonp);
 }
@@ -479,7 +480,7 @@ found:
                         local_address_ipv4,
                         host,
                         buffer, buflen,
-                        errnop, h_errnop,
+                        errnop, h_errnop, &_saved_errno_,
                         ttlp,
                         NULL);
 }

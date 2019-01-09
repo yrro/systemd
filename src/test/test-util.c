@@ -233,6 +233,23 @@ static void test_protect_errno_disarmed(void) {
         assert_se(*errnop == 25);
 }
 
+static void test_protect_errno_disarmed_inner(void) {
+        log_info("/* %s */", __func__);
+
+        errno = 12;
+        int *errnop = &errno;
+
+        {
+                PROTECT_ERRNO;
+
+                int *_saved_errno_p = &_saved_errno_;
+                *errnop = DISARM_PROTECT_ERRNO_INNER(25);
+        }
+
+        assert_se(errno == 25);
+        assert_se(*errnop == 25);
+}
+
 static void test_protect_errno_disarmed_static(void) {
         log_info("/* %s */", __func__);
 
@@ -431,6 +448,7 @@ int main(int argc, char *argv[]) {
         test_u64log2();
         test_protect_errno();
         test_protect_errno_disarmed();
+        test_protect_errno_disarmed_inner();
         test_protect_errno_disarmed_static();
         test_in_set();
         test_log2i();

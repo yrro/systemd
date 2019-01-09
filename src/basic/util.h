@@ -194,6 +194,13 @@ static inline void _reset_errno_(int *saved_errno) {
                 abs(r); \
         })
 
+#define DISARM_PROTECT_ERRNO_INNER(r) \
+        ({ \
+                _reset_errno_(_saved_errno_p); \
+                *_saved_errno_p = -1; \
+                abs(r); \
+        })
+
 static inline int negative_errno(void) {
         /* This helper should be used to shut up gcc if you know 'errno' is
          * negative. Instead of "return -errno;", use "return negative_errno();"
