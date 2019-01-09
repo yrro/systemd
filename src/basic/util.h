@@ -189,7 +189,7 @@ static inline void _reset_errno_(int *saved_errno) {
  */
 #define DISARM_PROTECT_ERRNO(r) \
         ({ \
-                errno = _saved_errno_; \
+                _reset_errno_(&_saved_errno_); \
                 _saved_errno_ = -1; \
                 abs(r); \
         })
