@@ -455,7 +455,7 @@ enum nss_status _nss_resolve_gethostbyname3_r(
         return NSS_STATUS_SUCCESS;
 
 fail:
-        *errnop = DISARM_PROTECT_ERRNO(-r);
+        *errnop = DISARM_PROTECT_ERRNO(r);
         *h_errnop = NO_RECOVERY;
         return ret;
 
